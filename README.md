@@ -50,7 +50,7 @@ Termination은 state space value가 infinite해질 때 된다고 써있다.
 그런데 이 환경에서 action을 처음부터 끝까지 최대 크기로 해서 실행해본 결과, truncated 되는 걸 확인했다. Truncated 기준이 5초일 때는 state가 infinite해질 일이 없는 것이다. 즉, 이번 실습 상에서는 terminated 될 일이 없다. 항상 truncated 된다.
 
 
-
+## Q-learning 시도
 처음에는 Q-learning을 시도했다. 그러나 Q-learning으로는 불가능하다는 걸 깨닫고 DQN을 이용해서 성공적으로 학습시켰다.
 
 Q-learning으로 코드를 다 짜고 실행을 했다. 실행을 했는데 number of visted (s,a)가 episode수에 따라 선형적으로 증가하고, 대부분의 state는 한번 방문한 것으로 떴다. 그리고 7만번 정도의 episode를 돌고 나니 ram부족으로 런타임이 종료됐다. 이때 깨달았다. 애초에 pusher env를 해결하기 위해 q-learning을 쓰면 안 됐다. 이 env는 State space, action space는 총 23+7=30 개의 인자들로 이뤄져 있다. 그리고 각 인자는 -inf~inf 또는 -2~2의 연속형 변수다. 그런데 각 인자에서 고작 10개의 discrete한 수준값만 시도한다고 해도 (s,a) 경우의 수는 10^30이 된다. 해당 경우들의 Q값만 저장해도 4*10^30 byte = 4*10^18 byte가 필요하다. 터무니 없는 수치다. Q-learning이 state, action이 복잡하면 사용할 수 없는 알고리즘이란 걸 당연히 알고는 있었지만, 그 말의 의미를 깊게 생각해보지 않은 결과였다. 앞으로는 알고리즘을 적용할 때 미리 공간복잡도를 꼭 따져봐야겠다는 다짐을 강하게 했다.
